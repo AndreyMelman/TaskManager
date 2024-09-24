@@ -1,8 +1,8 @@
 """create notes tasks tables
 
-Revision ID: 5c8d53ced9e0
+Revision ID: 2a361d0f2b98
 Revises: 
-Create Date: 2024-09-24 19:28:31.749529
+Create Date: 2024-09-25 00:26:06.474385
 
 """
 
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = "5c8d53ced9e0"
+revision: str = "2a361d0f2b98"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -38,7 +38,7 @@ def upgrade() -> None:
             server_default=sa.text("now()"),
             nullable=False,
         ),
-        sa.PrimaryKeyConstraint("id"),
+        sa.PrimaryKeyConstraint("id", name=op.f("pk_notes")),
     )
     op.create_table(
         "tasks",
@@ -60,7 +60,7 @@ def upgrade() -> None:
             server_default=sa.text("now()"),
             nullable=False,
         ),
-        sa.PrimaryKeyConstraint("id"),
+        sa.PrimaryKeyConstraint("id", name=op.f("pk_tasks")),
     )
     # ### end Alembic commands ###
 
