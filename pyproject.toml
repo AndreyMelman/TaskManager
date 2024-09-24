@@ -7,3 +7,7 @@ fastapi = "^0.115.0"
 uvicorn = {extras = ["standard"], version = "^0.30.6"}
 pydantic = {extras = ["email"], version = "^2.9.2"}
 pydantic-settings = "^2.5.2"
+
+[tool.poetry.group.dev.dependencies]
+black = "^24.8.0"
+
