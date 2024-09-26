@@ -7,8 +7,15 @@ class RunConfig(BaseModel):
     port: int = 8080
 
 
+class ApiV1Prefix(BaseModel):
+    prefix: str = "/v1"
+    tasks: str = "/tasks"
+    notes: str = "/notes"
+
+
 class ApiPrefix(BaseModel):
-    prefix: str = "/api/"
+    prefix: str = "/api"
+    v1: ApiV1Prefix = ApiV1Prefix()
 
 
 class DatabaseConfig(BaseModel):
@@ -30,6 +37,7 @@ class DatabaseConfig(BaseModel):
 class Settings(BaseSettings):
     run: RunConfig = RunConfig()
     db: DatabaseConfig
+    api: ApiPrefix = ApiPrefix()
 
     model_config = SettingsConfigDict(
         env_file=".env",
