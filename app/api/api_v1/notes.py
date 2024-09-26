@@ -1,11 +1,11 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
 from crud import notes
 from core.db import db_helper
 from schemas.note import Note, NoteCreate
-from core.config import settings
+from deps.dependencies import note_by_id
 
 router = APIRouter(tags=["Notes"])
 
@@ -14,8 +14,20 @@ router = APIRouter(tags=["Notes"])
     "/",
     response_model=list[Note],
 )
-async def get_notes(session: AsyncSession = Depends(db_helper.getter_session)):
+async def get_notes(
+    session: AsyncSession = Depends(db_helper.getter_session),
+):
     return await notes.get_notes(session=session)
+
+
+@router.get(
+    "/{note_id}",
+    response_model=Note,
+)
+async def get_note(
+    note: Note = Depends(note_by_id),
+):
+    return note
 
 
 @router.post(

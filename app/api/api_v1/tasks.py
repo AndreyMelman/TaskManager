@@ -1,10 +1,10 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.db import db_helper
 from crud import tasks
 from schemas.task import Task, TaskCreate
-from core.config import settings
+from deps.dependencies import task_by_id
 
 router = APIRouter(tags=["Tasks"])
 
@@ -17,6 +17,16 @@ async def get_tasks(
     session: AsyncSession = Depends(db_helper.getter_session),
 ):
     return await tasks.get_tasks(session=session)
+
+
+@router.get(
+    "/{task_id}",
+    response_model=Task,
+)
+async def get_task(
+    task: Task = Depends(task_by_id),
+):
+    return task
 
 
 @router.post(
