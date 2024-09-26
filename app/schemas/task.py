@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class TaskBase(BaseModel):
@@ -8,18 +8,18 @@ class TaskBase(BaseModel):
     description: str
     priority: str
     deadline_at: datetime
-    completed: bool
+    completed: bool = Field(default=False)
 
 
-class CreateNote(TaskBase):
+class TaskCreate(TaskBase):
     pass
 
 
-class UpdateTask(TaskBase):
+class TaskUpdate(TaskCreate):
     pass
 
 
-class UpdateTaskPartial(TaskBase):
+class TaskUpdatePartial(TaskCreate):
     title: str | None = None
     description: str | None = None
     priority: str | None = None
@@ -29,4 +29,7 @@ class UpdateTaskPartial(TaskBase):
 
 class Task(TaskBase):
     model_config = ConfigDict(from_attributes=True)
+
+    created_at: datetime
+    updated_at: datetime
     id: int
