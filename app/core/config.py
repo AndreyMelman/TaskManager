@@ -20,7 +20,7 @@ class ApiPrefix(BaseModel):
 
 class DatabaseConfig(BaseModel):
     url: PostgresDsn
-    echo: bool = True
+    echo: bool = False
     echo_pool: bool = False
     max_overflow: int = 10
     pool_size: int = 50
