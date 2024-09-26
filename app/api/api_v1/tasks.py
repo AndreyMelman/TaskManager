@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from core.db import db_helper
 from crud import tasks
 from schemas.task import Task, TaskCreate
+from core.config import settings
 
 router = APIRouter(tags=["Tasks"])
 

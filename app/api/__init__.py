@@ -1,9 +1,7 @@
 from fastapi import APIRouter
-from .api_v1.notes import router as notes_router
-from .api_v1.tasks import router as tasks_router
+from .api_v1 import router as api_v1_router
+from core.config import settings
 
+router = APIRouter(prefix=settings.api.prefix)
 
-router = APIRouter()
-
-router.include_router(notes_router, prefix="/notes")
-router.include_router(tasks_router, prefix="/tasks")
+router.include_router(api_v1_router)
