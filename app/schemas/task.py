@@ -16,10 +16,6 @@ class TaskCreate(TaskBase):
 
 
 class TaskUpdate(TaskCreate):
-    pass
-
-
-class TaskUpdatePartial(TaskCreate):
     title: str | None = None
     description: str | None = None
     priority: str | None = None

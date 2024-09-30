@@ -13,10 +13,6 @@ class NoteCreate(NoteBase):
 
 
 class NoteUpdate(NoteCreate):
-    pass
-
-
-class NoteUpdatePartial(NoteCreate):
     title: str | None = None
     content: str | None = None
 
