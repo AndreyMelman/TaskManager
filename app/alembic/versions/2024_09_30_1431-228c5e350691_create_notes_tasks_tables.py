@@ -1,8 +1,8 @@
 """create notes tasks tables
 
-Revision ID: fac0798c99de
+Revision ID: 228c5e350691
 Revises: 
-Create Date: 2024-09-25 20:01:18.769018
+Create Date: 2024-09-30 14:31:37.022799
 
 """
 
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = "fac0798c99de"
+revision: str = "228c5e350691"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -24,7 +24,6 @@ def upgrade() -> None:
     op.create_table(
         "notes",
         sa.Column("id", sa.Integer(), nullable=False),
-
         sa.Column("title", sa.String(length=50), nullable=False),
         sa.Column("content", sa.String(length=50000), nullable=True),
         sa.Column(
@@ -47,7 +46,7 @@ def upgrade() -> None:
         sa.Column("title", sa.String(length=50), nullable=False),
         sa.Column("description", sa.String(length=50000), nullable=True),
         sa.Column("priority", sa.String(length=15), nullable=True),
-        sa.Column("deadline_at", sa.DateTime(), nullable=False),
+        sa.Column("deadline_at", sa.DateTime(), nullable=True),
         sa.Column("completed", sa.Boolean(), nullable=False),
         sa.Column(
             "created_at",
