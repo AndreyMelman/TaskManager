@@ -1,7 +1,6 @@
-from datetime import datetime
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, status, HTTPException, Path, Query
+from fastapi import APIRouter, Depends, status, Path, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.task import PriorityEnum

@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from sqlalchemy import select, Result
 from sqlalchemy.ext.asyncio import AsyncSession
 
