@@ -40,6 +40,27 @@ async def get_notes_by_content(
     return list(notes)
 
 
+async def get_sorted_notes(
+    session: AsyncSession,
+    sort_by: str = "created_at",
+    order_by: str = "desc",
+) -> list[Note]:
+    stmt = select(Note)
+    if sort_by == "created_at":
+        if order_by == "desc":
+            stmt = stmt.order_by(Note.created_at.desc())
+        else:
+            stmt = stmt.order_by(Note.created_at)
+    if sort_by == "updated_at":
+        if order_by == "desc":
+            stmt = stmt.order_by(Note.updated_at.desc())
+        else:
+            stmt = stmt.order_by(Note.updated_at)
+
+    result: Result = await session.execute(stmt)
+    notes = result.scalars().all()
+    return list(notes)
+
 async def create_note(
     session: AsyncSession,
     note_in: NoteCreate,
