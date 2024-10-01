@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, status, HTTPException, Path, Query
@@ -35,6 +36,19 @@ async def get_filter_tasks(
         session=session,
         priority=priority,
         completed=completed,
+    )
+
+
+@router.get("/sorted/", response_model=list[Task])
+async def get_sorted_tasks(
+    sort_by: Annotated[str, Query(enum=["deadline_at", "created_at", "updated_at"])] = "created_at",
+    order_by: Annotated[str, Query(enum=["asc", "desc"])] = "asc",
+    session: AsyncSession = Depends(db_helper.getter_session),
+):
+    return await tasks.get_sorted_tasks(
+        session=session,
+        sort_by=sort_by,
+        order_by=order_by,
     )
 
 
