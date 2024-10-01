@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from sqlalchemy import select, Result
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -7,7 +9,6 @@ from schemas.task import (
     TaskCreate,
     TaskUpdate,
     TaskUpdateStatus,
-    TaskUpdatePriority,
 )
 
 
@@ -18,6 +19,7 @@ async def get_tasks(
     result: Result = await session.execute(stmt)
     tasks = result.scalars().all()
     return list(tasks)
+
 
 async def get_filter_tasks(
     session: AsyncSession,
@@ -34,6 +36,37 @@ async def get_filter_tasks(
     result: Result = await session.execute(stmt)
     tasks = result.scalars().all()
     return list(tasks)
+
+
+async def get_sorted_tasks(
+    session: AsyncSession,
+    sort_by: str = "created_at",
+    order_by: str = "desc",
+) -> list[Task]:
+    stmt = select(Task)
+    if sort_by == "deadline_at":
+        if order_by == "desc":
+            stmt = stmt.order_by(Task.deadline_at.desc())
+        else:
+            stmt = stmt.order_by(Task.deadline_at)
+
+    if sort_by == "created_at":
+        if order_by == "desc":
+            stmt = stmt.order_by(Task.created_at.desc())
+        else:
+            stmt = stmt.order_by(Task.created_at)
+
+    if sort_by == "updated_at":
+        if order_by == "desc":
+            stmt = stmt.order_by(Task.updated_at.desc())
+        else:
+            stmt = stmt.order_by(Task.updated_at)
+
+    result: Result = await session.execute(stmt)
+    tasks = result.scalars().all()
+    return list(tasks)
+
+
 
 
 async def get_task(
