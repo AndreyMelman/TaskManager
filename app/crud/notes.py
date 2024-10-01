@@ -1,3 +1,4 @@
+from fastapi import HTTPException, status
 from sqlalchemy import select, Result
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -19,6 +20,24 @@ async def get_note(
     note_id: int,
 ) -> Note | None:
     return await session.get(Note, note_id)
+
+
+async def get_notes_by_content(
+    session: AsyncSession,
+    search_query: str,
+    limit: int,
+    skip: int,
+) -> list[Note]:
+    stmt = (
+        select(Note)
+        .where(Note.content.ilike(f"%{search_query}%"))
+        .limit(limit)
+        .offset(skip)
+    )
+    result: Result = await session.execute(stmt)
+    notes = result.scalars().all()
+
+    return list(notes)
 
 
 async def create_note(

@@ -10,7 +10,7 @@ from .mixins.int_id_pk import IntIdPkMixin
 class Note(IntIdPkMixin, Base):
 
     title: Mapped[str] = mapped_column(String(50), nullable=False)
-    content: Mapped[str] = mapped_column(String(50000), nullable=True)
+    content: Mapped[str] = mapped_column(String(50000), nullable=True, index=True)
     created_at: Mapped[datetime] = mapped_column(
         server_default=func.now(),
         default=datetime.now,
