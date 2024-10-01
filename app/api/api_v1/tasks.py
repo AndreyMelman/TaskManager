@@ -1,9 +1,18 @@
-from fastapi import APIRouter, Depends, status
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, status, HTTPException, Path, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from models.task import PriorityEnum
 from core.db import db_helper
 from crud import tasks
-from schemas.task import Task, TaskCreate, TaskUpdate
+from schemas.task import (
+    Task,
+    TaskCreate,
+    TaskUpdate,
+    TaskUpdateStatus,
+    TaskUpdatePriority,
+)
 from deps.dependencies import task_by_id
 
 router = APIRouter(tags=["Tasks"])
@@ -14,6 +23,19 @@ async def get_tasks(
     session: AsyncSession = Depends(db_helper.getter_session),
 ):
     return await tasks.get_tasks(session=session)
+
+
+@router.get("/filters/", response_model=list[Task])
+async def get_filter_tasks(
+    priority: Annotated[PriorityEnum, Query(description="Filter by priority")] = None,
+    completed: Annotated[bool, Query(description="Filter by completed")] = None,
+    session: AsyncSession = Depends(db_helper.getter_session),
+):
+    return await tasks.get_filter_tasks(
+        session=session,
+        priority=priority,
+        completed=completed,
+    )
 
 
 @router.get("/{task_id}/", response_model=Task)
@@ -45,6 +67,32 @@ async def update_task(
         task=task,
         task_update=task_update,
         partial=True,
+    )
+
+
+@router.patch("/{task_id}/status/", response_model=TaskUpdateStatus)
+async def update_task_status(
+    task_update_status: TaskUpdateStatus,
+    task: Task = Depends(task_by_id),
+    session: AsyncSession = Depends(db_helper.getter_session),
+):
+    return await tasks.mark_task_as_completed(
+        session=session,
+        task=task,
+        task_update_status=task_update_status,
+    )
+
+
+@router.patch("/{task_id}/priority/{priority_name}", response_model=TaskUpdatePriority)
+async def update_task_priority(
+    priority_name: PriorityEnum = Annotated[PriorityEnum, Path(title="Priority Name")],
+    task: Task = Depends(task_by_id),
+    session: AsyncSession = Depends(db_helper.getter_session),
+):
+    return await tasks.update_task_priority(
+        session=session,
+        task=task,
+        priority_name=priority_name,
     )
 
 
