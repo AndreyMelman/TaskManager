@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Depends, status
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, status, Query, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
@@ -15,6 +17,24 @@ async def get_notes(
     session: AsyncSession = Depends(db_helper.getter_session),
 ):
     return await notes.get_notes(session=session)
+
+
+@router.get("/search/", response_model=list[Note])
+async def get_notes_by_content(
+    query: Annotated[str, Query()],
+    limit: int = 10,
+    skip: int = 0,
+    session: AsyncSession = Depends(db_helper.getter_session),
+):
+    note = await notes.get_notes_by_content(
+        session=session,
+        search_query=query,
+        limit=limit,
+        skip=skip,
+    )
+    if not note:
+        raise HTTPException(status_code=status.HTTP_204_NO_CONTENT)
+    return note
 
 
 @router.get("/{note_id}/", response_model=Note)
