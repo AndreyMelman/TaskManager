@@ -37,6 +37,19 @@ async def get_notes_by_content(
     return note
 
 
+@router.get("/sorted/", response_model=list[Note])
+async def get_sorted_notes(
+    sort_by: Annotated[str, Query(enum=["created_at", "updated_at"])] = "created_at",
+    order_by: Annotated[str, Query(enum=["asc", "desc"])] = "asc",
+    session: AsyncSession = Depends(db_helper.getter_session),
+):
+    return await notes.get_sorted_notes(
+        session=session,
+        sort_by=sort_by,
+        order_by=order_by,
+    )
+
+
 @router.get("/{note_id}/", response_model=Note)
 async def get_note(
     note: Note = Depends(note_by_id),
