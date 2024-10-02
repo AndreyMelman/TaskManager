@@ -1,16 +1,15 @@
 from datetime import datetime
-from typing import TYPE_CHECKING
 
-from sqlalchemy import String, func, ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import String, func
+from sqlalchemy.orm import Mapped, mapped_column
 
 from core.db import Base
 from .mixins.int_id_pk import IntIdPkMixin
+from .mixins.user_relation import UserRelationMixin
 
-if TYPE_CHECKING:
-    from .user import User
 
-class Note(IntIdPkMixin, Base):
+class Note(UserRelationMixin, IntIdPkMixin, Base):
+    _user_back_populates = "notes"
 
     title: Mapped[str] = mapped_column(String(50))
     content: Mapped[str] = mapped_column(String(50000), nullable=True, index=True)
@@ -22,6 +21,3 @@ class Note(IntIdPkMixin, Base):
         server_default=func.now(),
         onupdate=datetime.now(),
     )
-
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
-    user: Mapped["User"] = relationship(back_populates="notes")
