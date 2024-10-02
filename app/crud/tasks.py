@@ -2,12 +2,12 @@ from sqlalchemy import select, Result
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models import Task
-from models.task import PriorityEnum
 from schemas.task import (
     TaskCreate,
     TaskUpdate,
     TaskUpdateStatus,
 )
+from models.task import PriorityEnum
 
 
 async def get_tasks(

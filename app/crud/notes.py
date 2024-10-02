@@ -1,8 +1,8 @@
 from sqlalchemy import select, Result
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from schemas.note import NoteCreate, NoteUpdate
 from models import Note
+from schemas.note import NoteCreate, NoteUpdate
 
 
 async def get_notes(

@@ -3,9 +3,9 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, status, Path, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from models.task import PriorityEnum
 from core.db import db_helper
 from crud import tasks
+from deps.dependencies import task_by_id
 from schemas.task import (
     Task,
     TaskCreate,
@@ -13,7 +13,7 @@ from schemas.task import (
     TaskUpdateStatus,
     TaskUpdatePriority,
 )
-from deps.dependencies import task_by_id
+from models.task import PriorityEnum
 
 router = APIRouter(tags=["Tasks"])
 
