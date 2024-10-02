@@ -1,15 +1,18 @@
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 from sqlalchemy import String, func, ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from core.db import Base
 from .mixins.int_id_pk import IntIdPkMixin
 
+if TYPE_CHECKING:
+    from .user import User
 
 class Note(IntIdPkMixin, Base):
 
-    title: Mapped[str] = mapped_column(String(50), nullable=False)
+    title: Mapped[str] = mapped_column(String(50))
     content: Mapped[str] = mapped_column(String(50000), nullable=True, index=True)
     created_at: Mapped[datetime] = mapped_column(
         server_default=func.now(),
@@ -21,3 +24,4 @@ class Note(IntIdPkMixin, Base):
     )
 
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    user: Mapped["User"] = relationship(back_populates="notes")

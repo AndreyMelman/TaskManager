@@ -1,11 +1,15 @@
 import enum
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 from sqlalchemy import String, func, DateTime, Enum, ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from core.db import Base
 from .mixins.int_id_pk import IntIdPkMixin
+
+if TYPE_CHECKING:
+    from .user import User
 
 
 class PriorityEnum(str, enum.Enum):
@@ -16,12 +20,18 @@ class PriorityEnum(str, enum.Enum):
 
 class Task(IntIdPkMixin, Base):
 
-    title: Mapped[str] = mapped_column(String(50), nullable=False)
+    title: Mapped[str] = mapped_column(String(50))
     description: Mapped[str] = mapped_column(String(50000), nullable=True)
     priority: Mapped[PriorityEnum] = mapped_column(
-        Enum(PriorityEnum), nullable=True, default=PriorityEnum.medium
+        Enum(PriorityEnum),
+        nullable=True,
+        default=PriorityEnum.medium,
     )
-    deadline_at: Mapped[datetime] = mapped_column(DateTime, default=None, nullable=True)
+    deadline_at: Mapped[datetime] = mapped_column(
+        DateTime,
+        default=None,
+        nullable=True,
+    )
     completed: Mapped[bool] = mapped_column(default=False)
     created_at: Mapped[datetime] = mapped_column(
         server_default=func.now(),
@@ -33,3 +43,4 @@ class Task(IntIdPkMixin, Base):
     )
 
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    user: Mapped["User"] = relationship(back_populates="tasks")
