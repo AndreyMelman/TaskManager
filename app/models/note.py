@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import String, func
+from sqlalchemy import String, func, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column
 
 from core.db import Base
@@ -19,3 +19,5 @@ class Note(IntIdPkMixin, Base):
         server_default=func.now(),
         onupdate=datetime.now(),
     )
+
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))

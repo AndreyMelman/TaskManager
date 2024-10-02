@@ -1,8 +1,7 @@
-from datetime import datetime
 import enum
+from datetime import datetime
 
-
-from sqlalchemy import String, func, DateTime, Enum
+from sqlalchemy import String, func, DateTime, Enum, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column
 
 from core.db import Base
@@ -19,7 +18,9 @@ class Task(IntIdPkMixin, Base):
 
     title: Mapped[str] = mapped_column(String(50), nullable=False)
     description: Mapped[str] = mapped_column(String(50000), nullable=True)
-    priority: Mapped[PriorityEnum] = mapped_column(Enum(PriorityEnum), nullable=True, default=PriorityEnum.medium)
+    priority: Mapped[PriorityEnum] = mapped_column(
+        Enum(PriorityEnum), nullable=True, default=PriorityEnum.medium
+    )
     deadline_at: Mapped[datetime] = mapped_column(DateTime, default=None, nullable=True)
     completed: Mapped[bool] = mapped_column(default=False)
     created_at: Mapped[datetime] = mapped_column(
@@ -30,3 +31,5 @@ class Task(IntIdPkMixin, Base):
         server_default=func.now(),
         onupdate=datetime.now(),
     )
+
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
