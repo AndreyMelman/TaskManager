@@ -11,6 +11,7 @@ from .mixins.int_id_pk import IntIdPkMixin
 if TYPE_CHECKING:
     from .task import Task
     from .note import Note
+    from .profile import Profile
 
 
 class User(IntIdPkMixin, Base):
@@ -29,3 +30,4 @@ class User(IntIdPkMixin, Base):
 
     tasks: Mapped[list["Task"]] = relationship(back_populates="user")
     notes: Mapped[list["Note"]] = relationship(back_populates="user")
+    profiles: Mapped[list["Profile"]] = relationship(back_populates="user")
