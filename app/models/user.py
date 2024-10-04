@@ -5,6 +5,7 @@ from sqlalchemy import String, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from core.db import Base
+from core.types.user_id import UserIdType
 from .mixins.int_id_pk import IntIdPkMixin
 
 from fastapi_users.db import SQLAlchemyBaseUserTable, SQLAlchemyUserDatabase
@@ -18,7 +19,7 @@ if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncSession
 
 
-class User(Base, IntIdPkMixin, SQLAlchemyBaseUserTable[int]):
+class User(Base, IntIdPkMixin, SQLAlchemyBaseUserTable[UserIdType]):
 
     created_at: Mapped[datetime] = mapped_column(
         server_default=func.now(),
