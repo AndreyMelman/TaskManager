@@ -7,6 +7,9 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from core.db import Base
 from .mixins.int_id_pk import IntIdPkMixin
 
+from fastapi_users.db import SQLAlchemyBaseUserTable, SQLAlchemyUserDatabase
+
+
 
 if TYPE_CHECKING:
     from .task import Task
@@ -14,11 +17,8 @@ if TYPE_CHECKING:
     from .profile import Profile
 
 
-class User(IntIdPkMixin, Base):
+class User(Base, IntIdPkMixin, SQLAlchemyBaseUserTable[int]):
 
-    username: Mapped[str] = mapped_column(String(32), unique=True)
-    email: Mapped[str] = mapped_column(String(255), unique=True)
-    password_hash: Mapped[str] = mapped_column(String(255), unique=True)
     created_at: Mapped[datetime] = mapped_column(
         server_default=func.now(),
         default=datetime.now,
@@ -28,6 +28,6 @@ class User(IntIdPkMixin, Base):
         onupdate=datetime.now(),
     )
 
-    tasks: Mapped[list["Task"]] = relationship(back_populates="user")
-    notes: Mapped[list["Note"]] = relationship(back_populates="user")
-    profiles: Mapped[list["Profile"]] = relationship(back_populates="user")
+    # tasks: Mapped[list["Task"]] = relationship(back_populates="user")
+    # notes: Mapped[list["Note"]] = relationship(back_populates="user")
+    # profiles: Mapped[list["Profile"]] = relationship(back_populates="user")
