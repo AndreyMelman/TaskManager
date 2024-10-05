@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.db import db_helper
 from crud import notes
-from deps.dependencies import note_by_id
+from api.dependencies.note_task_by_id import note_by_id
 from schemas.note import Note, NoteCreate, NoteUpdate
 
 router = APIRouter(tags=["Notes"])

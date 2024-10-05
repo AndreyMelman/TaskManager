@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.db import db_helper
 from crud import tasks
-from deps.dependencies import task_by_id
+from api.dependencies.note_task_by_id import task_by_id
 from schemas.task import (
     Task,
     TaskCreate,
