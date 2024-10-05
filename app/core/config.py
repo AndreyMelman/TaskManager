@@ -34,11 +34,10 @@ class DatabaseConfig(BaseModel):
     }
 
 
-class Settings(BaseSettings):
-    run: RunConfig = RunConfig()
-    db: DatabaseConfig
-    api: ApiPrefix = ApiPrefix()
+class AccessToken(BaseModel):
+    lifetime_seconds: int = 3600
 
+class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env",
         case_sensitive=False,
@@ -46,6 +45,12 @@ class Settings(BaseSettings):
         env_prefix="APP_CONFIG__",
         env_file_encoding="utf-8",
     )
+
+    run: RunConfig = RunConfig()
+    db: DatabaseConfig
+    api: ApiPrefix = ApiPrefix()
+    access_token: AccessToken = AccessToken()
+
 
 
 settings = Settings()
