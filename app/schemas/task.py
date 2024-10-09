@@ -18,7 +18,7 @@ class TaskCreate(TaskBase):
 
 
 class TaskUpdate(TaskCreate):
-    title: str | None = Field(default="", max_length=50)
+    title: str | None = Field(default="", min_length=1, max_length=50)
     description: str | None = Field(default="", max_length=50000)
     priority: PriorityEnum | None = None
     deadline_at: datetime | None = Field(default=datetime.now())
@@ -39,3 +39,4 @@ class Task(TaskBase):
     created_at: datetime
     updated_at: datetime
     id: int
+    user_id: int
