@@ -1,7 +1,7 @@
 from sqlalchemy import select, Result
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from models import Task
+from models import Task, User
 from schemas.task import (
     TaskCreate,
     TaskUpdate,
@@ -12,8 +12,9 @@ from models.task import PriorityEnum
 
 async def get_tasks(
     session: AsyncSession,
+    user: User,
 ) -> list[Task]:
-    stmt = select(Task).order_by(Task.id)
+    stmt = select(Task).order_by(Task.id).filter(Task.user_id == user.id)
     result: Result = await session.execute(stmt)
     tasks = result.scalars().all()
     return list(tasks)
@@ -23,13 +24,14 @@ async def get_filter_tasks(
     session: AsyncSession,
     priority: PriorityEnum,
     completed: bool,
+    user: User,
 ) -> list[Task]:
-    stmt = select(Task).order_by(Task.id)
+    stmt = select(Task).where(Task.user_id == user.id).order_by(Task.id)
 
     if priority:
-        stmt = stmt.filter(Task.priority == priority)
+        stmt = stmt.where(Task.priority == priority)
     if completed:
-        stmt = stmt.filter(Task.completed == completed)
+        stmt = stmt.where(Task.completed == completed)
 
     result: Result = await session.execute(stmt)
     tasks = result.scalars().all()
@@ -38,10 +40,11 @@ async def get_filter_tasks(
 
 async def get_sorted_tasks(
     session: AsyncSession,
+    user: User,
     sort_by: str = "created_at",
     order_by: str = "desc",
 ) -> list[Task]:
-    stmt = select(Task)
+    stmt = select(Task).where(Task.user_id == user.id)
     if sort_by == "deadline_at":
         if order_by == "desc":
             stmt = stmt.order_by(Task.deadline_at.desc())
@@ -69,16 +72,21 @@ async def get_sorted_tasks(
 
 async def get_task(
     session: AsyncSession,
-    task_id: int,
+    item_id: int,
+    user: User,
 ) -> Task | None:
-    return await session.get(Task, task_id)
+    stmt = select(Task).where(Task.id == item_id, Task.user_id == user.id)
+    result: Result = await session.execute(stmt)
+    task = result.scalars().first()
+    return task
 
 
 async def create_task(
     session: AsyncSession,
     task_in: TaskCreate,
+    user: User,
 ) -> Task:
-    task = Task(**task_in.model_dump())
+    task = Task(**task_in.model_dump(), user_id=user.id)
     session.add(task)
     await session.commit()
     return task
