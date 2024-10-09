@@ -14,7 +14,7 @@ class NoteCreate(NoteBase):
 
 
 class NoteUpdate(NoteCreate):
-    title: str | None = Field(default="", max_length=50)
+    title: str | None = Field(default="",min_length=1, max_length=50)
     content: str | None = Field(default="", max_length=50000)
 
 

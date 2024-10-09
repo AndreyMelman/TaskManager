@@ -9,7 +9,7 @@ async def get_notes(
     session: AsyncSession,
     user: User,
 ) -> list[Note]:
-    stmt = select(Note).order_by(Note.id).filter(Note.user_id == user.id)
+    stmt = select(Note).where(Note.user_id == user.id).order_by(Note.id)
     result: Result = await session.execute(stmt)
     notes = result.scalars().all()
     return list(notes)
