@@ -17,11 +17,11 @@ async def get_notes(
 
 async def get_note(
     session: AsyncSession,
-    note_id: int,
+    item_id: int,
     user: User,
 ) -> Note | None:
     stmt = select(Note).where(
-        Note.id == note_id,
+        Note.id == item_id,
         Note.user_id == user.id,
     )
     result = await session.execute(stmt)
