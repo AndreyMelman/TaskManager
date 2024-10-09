@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from api.api_v1.fastapi_users import current_active_user
 from core.db import db_helper
 from crud import notes
-from api.dependencies.note_task_by_id import note_getter
+from api.dependencies.load_by_id import note_getter
 from models import User
 from schemas.note import Note, NoteCreate, NoteUpdate
 
