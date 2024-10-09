@@ -1,14 +1,15 @@
 from sqlalchemy import select, Result
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from models import Note
+from models import Note, User
 from schemas.note import NoteCreate, NoteUpdate
 
 
 async def get_notes(
     session: AsyncSession,
+    user: User,
 ) -> list[Note]:
-    stmt = select(Note).order_by(Note.id)
+    stmt = select(Note).order_by(Note.id).filter(Note.user_id == user.id)
     result: Result = await session.execute(stmt)
     notes = result.scalars().all()
     return list(notes)
@@ -17,19 +18,27 @@ async def get_notes(
 async def get_note(
     session: AsyncSession,
     note_id: int,
+    user: User,
 ) -> Note | None:
-    return await session.get(Note, note_id)
+    stmt = select(Note).where(
+        Note.id == note_id,
+        Note.user_id == user.id,
+    )
+    result = await session.execute(stmt)
+    note = result.scalars().first()
+    return note
 
 
 async def get_notes_by_content(
     session: AsyncSession,
+    user: User,
     search_query: str,
     limit: int,
     skip: int,
 ) -> list[Note]:
     stmt = (
         select(Note)
-        .where(Note.content.ilike(f"%{search_query}%"))
+        .where(Note.content.ilike(f"%{search_query}%"), Note.user_id == user.id)
         .limit(limit)
         .offset(skip)
     )
@@ -41,10 +50,11 @@ async def get_notes_by_content(
 
 async def get_sorted_notes(
     session: AsyncSession,
+    user: User,
     sort_by: str = "created_at",
     order_by: str = "desc",
 ) -> list[Note]:
-    stmt = select(Note)
+    stmt = select(Note).where(Note.user_id == user.id)
     if sort_by == "created_at":
         if order_by == "desc":
             stmt = stmt.order_by(Note.created_at.desc())
@@ -60,13 +70,16 @@ async def get_sorted_notes(
     notes = result.scalars().all()
     return list(notes)
 
+
 async def create_note(
     session: AsyncSession,
     note_in: NoteCreate,
+    user: User,
 ) -> Note:
-    note = Note(**note_in.model_dump())
+    note = Note(**note_in.model_dump(), user_id=user.id)
     session.add(note)
     await session.commit()
+    await session.refresh(note)
     return note
 
 
