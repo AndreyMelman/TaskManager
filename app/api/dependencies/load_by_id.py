@@ -26,7 +26,7 @@ class LoaderById:
         user: User = Depends(current_active_user),
     ):
 
-        item = await self.get_method(session=session, note_id=item_id, user=user)
+        item = await self.get_method(session=session, item_id=item_id, user=user)
         if item is not None:
             return item
         raise HTTPException(
