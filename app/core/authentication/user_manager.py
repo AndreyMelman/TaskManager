@@ -1,5 +1,5 @@
 import logging
-from typing import Optional, TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING, Any
 
 from fastapi_users import BaseUserManager, IntegerIDMixin
 
@@ -9,6 +9,7 @@ from core.types.user_id import UserIdType
 
 if TYPE_CHECKING:
     from fastapi import Request
+    from fastapi import Response
 
 log = logging.getLogger(__name__)
 
@@ -50,3 +51,19 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, UserIdType]):
             user.id,
             token,
         )
+
+    async def on_after_update(
+        self,
+        user: User,
+        update_dict: dict[str, Any],
+        request: Optional["Request"] = None,
+    ):
+        log.warning("User %r has been updated with %r.", user.id, update_dict)
+
+    async def on_after_login(
+        self,
+        user: User,
+        request: Optional["Request"] = None,
+        response: Optional["Response"] = None,
+    ):
+        log.warning("User %r logged in.", user.id)
