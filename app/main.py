@@ -1,3 +1,5 @@
+import logging
+
 from contextlib import asynccontextmanager
 
 import uvicorn
@@ -7,6 +9,10 @@ from fastapi.responses import ORJSONResponse
 from api import router as api_router
 from core.config import settings
 from core.db import db_helper
+from utils.common_log import configure_logging
+
+configure_logging(level=logging.INFO)
+log = logging.getLogger(__name__)
 
 
 @asynccontextmanager
@@ -25,6 +31,7 @@ app = FastAPI(
 app.include_router(api_router)
 
 if __name__ == "__main__":
+    log.info("Starting uvicorn")
     uvicorn.run(
         "main:app",
         host=settings.run.host,
