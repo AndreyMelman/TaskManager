@@ -1,5 +1,8 @@
+import logging
 from typing import AsyncGenerator
 
+from fastapi import HTTPException, status
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import (
     AsyncEngine,
     create_async_engine,
@@ -8,6 +11,8 @@ from sqlalchemy.ext.asyncio import (
 )
 
 from core.config import settings
+
+log = logging.getLogger(__name__)
 
 
 class DatabaseHelper:
@@ -34,11 +39,28 @@ class DatabaseHelper:
         )
 
     async def dispose(self) -> None:
-        await self.engine.dispose()
+        try:
+            await self.engine.dispose()
+        except SQLAlchemyError as e:
+            log.error("Database error: %r", e)
+            raise HTTPException(
+                status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Database error"
+            )
 
     async def getter_session(self) -> AsyncGenerator[AsyncSession, None]:
-        async with self.session_factory() as session:
-            yield session
+        try:
+            async with self.session_factory() as session:
+                log.info("Starting database session and transaction")
+                yield session
+                log.info("Session created and transaction committed successfully")
+            log.info("Session closed successfully")
+        except SQLAlchemyError as e:
+            log.error("Database error during transaction: %r. Rolling back transaction.", e)
+            raise HTTPException(
+                status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Database error"
+            )
+        except Exception as e:
+            log.error("Unexpected error: %r. Transaction might not be committed.", e)
 
 
 db_helper = DatabaseHelper(
