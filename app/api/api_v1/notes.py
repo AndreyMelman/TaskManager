@@ -23,6 +23,9 @@ async def get_notes(
     session: AsyncSession = Depends(db_helper.getter_session),
     user: User = Depends(current_active_user),
 ):
+    if user.is_superuser:
+        return await notes.get_all_notes(session=session)
+
     return await notes.get_notes(session=session, user=user)
 
 

@@ -15,6 +15,33 @@ async def get_notes(
     return list(notes)
 
 
+async def get_all_notes(
+    session: AsyncSession,
+)-> list[Note]:
+    """
+    Get all notes for superuser
+    :param session: Session for connection with database
+    """
+    stmt = select(Note).order_by(Note.id)
+    result: Result = await session.execute(stmt)
+    notes = result.scalars().all()
+    return list(notes)
+
+
+# async def get_notes(
+#     session: AsyncSession,
+#     user: User,
+# ) -> list[Note]:
+#     if user.is_superuser:
+#         stmt = select(Note).order_by(Note.id)
+#     else:
+#         stmt = select(Note).where(Note.user_id == user.id).order_by(Note.id)
+#
+#     result: Result = await session.execute(stmt)
+#     notes = result.scalars().all()
+#     return list(notes)
+
+
 async def get_note(
     session: AsyncSession,
     item_id: int,
