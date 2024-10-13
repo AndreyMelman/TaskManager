@@ -58,7 +58,11 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, UserIdType]):
         update_dict: dict[str, Any],
         request: Optional["Request"] = None,
     ):
-        log.warning("User %r has been updated with %r.", user.id, update_dict)
+        log.warning(
+            "User %r has been updated with %r.",
+            user.id,
+            update_dict,
+        )
 
     async def on_after_login(
         self,
@@ -66,4 +70,17 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, UserIdType]):
         request: Optional["Request"] = None,
         response: Optional["Response"] = None,
     ):
-        log.warning("User %r logged in.", user.id)
+        log.warning(
+            "User %r logged in.",
+            user.id,
+        )
+
+    async def on_before_delete(
+        self,
+        user: User,
+        request: Optional["Request"] = None,
+    ):
+        log.warning(
+            "User %r is going to be deleted",
+            user.id,
+        )
