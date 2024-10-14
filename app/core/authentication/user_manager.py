@@ -3,6 +3,7 @@ from typing import Optional, TYPE_CHECKING, Any
 
 from fastapi_users import BaseUserManager, IntegerIDMixin
 
+from mailer.smtp_service import send_email
 from models import User
 from core.config import settings
 from core.types.user_id import UserIdType
@@ -27,6 +28,11 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, UserIdType]):
             "User %r has registered.",
             user.id,
         )
+        subject = "Welcome to Our Service!"
+        body = f"Hello {user.email},\n\nThank you for registering on our platform. We're excited to have you!"
+
+        # Отправляем письмо
+        await send_email(user.email, subject, body)
 
     async def on_after_forgot_password(
         self,
