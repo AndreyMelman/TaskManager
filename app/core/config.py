@@ -49,6 +49,13 @@ class AccessToken(BaseModel):
     verification_token_secret: str
 
 
+class EmailConfig(BaseModel):
+    smtp_user: str
+    smtp_password: str
+    smtp_server: str
+    smtp_port: str
+
+
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env",
@@ -62,6 +69,7 @@ class Settings(BaseSettings):
     db: DatabaseConfig
     api: ApiPrefix = ApiPrefix()
     access_token: AccessToken
+    email_a: EmailConfig
 
 
 settings = Settings()
