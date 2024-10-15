@@ -61,11 +61,6 @@ class DatabaseHelper:
             raise HTTPException(
                 status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Database error"
             )
-        except Exception as e:
-            log.error("Unexpected error: %r. Transaction might not be committed.", e)
-            raise HTTPException(
-                status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Unexpected error"
-            )
 
 
 db_helper = DatabaseHelper(
