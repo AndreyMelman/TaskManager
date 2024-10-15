@@ -14,7 +14,7 @@ from fastapi_users.db import SQLAlchemyBaseUserTable, SQLAlchemyUserDatabase
 if TYPE_CHECKING:
     from .task import Task
     from .note import Note
-    # from .profile import Profile
+    from .profile import Profile
     from sqlalchemy.ext.asyncio import AsyncSession
 
 
@@ -31,7 +31,7 @@ class User(Base, IntIdPkMixin, SQLAlchemyBaseUserTable[UserIdType]):
 
     tasks: Mapped[list["Task"]] = relationship(back_populates="user")
     notes: Mapped[list["Note"]] = relationship(back_populates="user")
-    # profiles: Mapped[list["Profile"]] = relationship(back_populates="user")
+    profiles: Mapped[list["Profile"]] = relationship(back_populates="user")
 
     @classmethod
     def get_db(cls, session: "AsyncSession"):
