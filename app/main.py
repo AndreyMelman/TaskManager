@@ -35,8 +35,9 @@ app.include_router(api_router)
 async def root():
     return {"message": "Hello"}
 
+
 if __name__ == "__main__":
-    log.info("Starting uvicorn")
+    log.info("Starting application")
     uvicorn.run(
         "main:app",
         host=settings.run.host,
