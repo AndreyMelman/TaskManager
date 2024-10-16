@@ -15,6 +15,7 @@ if TYPE_CHECKING:
     from .task import Task
     from .note import Note
     from .profile import Profile
+    from .category import Category
     from sqlalchemy.ext.asyncio import AsyncSession
 
 
@@ -32,6 +33,7 @@ class User(Base, IntIdPkMixin, SQLAlchemyBaseUserTable[UserIdType]):
     tasks: Mapped[list["Task"]] = relationship(back_populates="user")
     notes: Mapped[list["Note"]] = relationship(back_populates="user")
     profiles: Mapped[list["Profile"]] = relationship(back_populates="user")
+    categories: Mapped[list["Category"]] = relationship(back_populates="user")
 
     @classmethod
     def get_db(cls, session: "AsyncSession"):
