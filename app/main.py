@@ -30,6 +30,11 @@ app = FastAPI(
 
 app.include_router(api_router)
 
+
+@app.get("/")
+async def root():
+    return {"message": "Hello"}
+
 if __name__ == "__main__":
     log.info("Starting uvicorn")
     uvicorn.run(
