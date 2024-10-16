@@ -1,8 +1,8 @@
 import enum
 from datetime import datetime
 
-from sqlalchemy import String, func, DateTime, Enum
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import String, func, DateTime, Enum, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from core.db import Base
 from .mixins.int_id_pk import IntIdPkMixin
@@ -39,3 +39,6 @@ class Task(UserRelationMixin, IntIdPkMixin, Base):
         server_default=func.now(),
         onupdate=datetime.now(),
     )
+
+    category_id: Mapped[int] = mapped_column(ForeignKey("categories.id"), nullable=True)
+    category = relationship("Category", back_populates="tasks")
