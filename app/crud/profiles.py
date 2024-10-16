@@ -1,4 +1,4 @@
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 from sqlalchemy import select, Result
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -21,11 +21,13 @@ async def create_user_profile(
 async def get_profile(
     session: AsyncSession,
     user: User,
-) -> Profile:
+) -> Profile | None:
     stmt = select(Profile).where(Profile.user_id == user.id)
     result: Result = await session.execute(stmt)
     profile = result.scalar()
-    return profile
+    if profile is not None:
+        return profile
+    raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Profile not found")
 
 
 async def update_user_profile(
