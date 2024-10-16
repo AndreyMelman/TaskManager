@@ -6,8 +6,8 @@ from starlette import status
 
 from api.api_v1.fastapi_users import current_active_user
 from core.db import db_helper
-from crud import tasks, notes
-from models import Task, Note, User
+from crud import tasks, notes, categories
+from models import Task, Note, User, Category
 
 
 class LoaderById:
@@ -36,7 +36,7 @@ class LoaderById:
 
 task_getter = LoaderById(model=Task, get_method=tasks.get_task)
 note_getter = LoaderById(model=Note, get_method=notes.get_note)
-
+category_getter = LoaderById(model=Category, get_method=categories.get_category_by_id)
 
 
 # async def task_by_id(
