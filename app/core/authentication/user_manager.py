@@ -24,7 +24,7 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, UserIdType]):
         user: User,
         request: Optional["Request"] = None,
     ):
-        log.warning(
+        log.info(
             "User %r has registered.",
             user.id,
         )
@@ -40,7 +40,7 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, UserIdType]):
         token: str,
         request: Optional["Request"] = None,
     ):
-        log.warning(
+        log.info(
             "User %r has forgot their password. Reset token: %r",
             user.id,
             token,
@@ -52,7 +52,7 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, UserIdType]):
         token: str,
         request: Optional["Request"] = None,
     ):
-        log.warning(
+        log.info(
             "Verification requested for user %r. Verification token: %r",
             user.id,
             token,
@@ -64,7 +64,7 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, UserIdType]):
         update_dict: dict[str, Any],
         request: Optional["Request"] = None,
     ):
-        log.warning(
+        log.info(
             "User %r has been updated with %r.",
             user.id,
             update_dict,
@@ -76,7 +76,7 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, UserIdType]):
         request: Optional["Request"] = None,
         response: Optional["Response"] = None,
     ):
-        log.warning(
+        log.info(
             "User %r logged in.",
             user.id,
         )
@@ -86,7 +86,7 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, UserIdType]):
         user: User,
         request: Optional["Request"] = None,
     ):
-        log.warning(
+        log.info(
             "User %r is going to be deleted",
             user.id,
         )
