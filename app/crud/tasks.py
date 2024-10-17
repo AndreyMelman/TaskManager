@@ -68,6 +68,16 @@ async def get_sorted_tasks(
     return list(tasks)
 
 
+async def get_tasks_by_category(
+    session: AsyncSession,
+    user: User,
+    category_id: int,
+) -> list[Task]:
+    stmt = select(Task).where(Task.category_id == category_id, Task.user_id == user.id)
+    result = await session.execute(stmt)
+    tasks = result.scalars().all()
+    return list(tasks)
+
 
 async def get_task(
     session: AsyncSession,

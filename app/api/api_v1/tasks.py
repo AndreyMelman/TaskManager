@@ -58,6 +58,18 @@ async def get_sorted_tasks(
         order_by=order_by,
     )
 
+@router.get('/{category_id}', response_model=list[Task])
+async def get_tasks_by_category(
+    category_id: Annotated[int, Path],
+    session: AsyncSession = Depends(db_helper.getter_session),
+    user: User = Depends(current_active_user),
+):
+    return await tasks.get_tasks_by_category(
+        session=session,
+        user=user,
+        category_id=category_id,
+    )
+
 
 @router.get("/{task_id}/", response_model=Task)
 async def get_task(
