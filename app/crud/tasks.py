@@ -63,6 +63,12 @@ async def get_sorted_tasks(
         else:
             stmt = stmt.order_by(Task.updated_at)
 
+    if sort_by == "category_id":
+        if order_by == "desc":
+            stmt = stmt.order_by(Task.category_id.desc())
+        else:
+            stmt = stmt.order_by(Task.category_id)
+
     result: Result = await session.execute(stmt)
     tasks = result.scalars().all()
     return list(tasks)

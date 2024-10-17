@@ -46,7 +46,7 @@ async def get_filter_tasks(
 
 @router.get("/sorted/", response_model=list[Task])
 async def get_sorted_tasks(
-    sort_by: Annotated[str, Query(enum=["deadline_at", "created_at", "updated_at"])] = "created_at",
+    sort_by: Annotated[str, Query(enum=["deadline_at", "created_at", "updated_at", "category_id",])] = "created_at",
     order_by: Annotated[str, Query(enum=["asc", "desc"])] = "asc",
     user: User = Depends(current_active_user),
     session: AsyncSession = Depends(db_helper.getter_session),
