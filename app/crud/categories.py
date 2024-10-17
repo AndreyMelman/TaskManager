@@ -52,3 +52,12 @@ async def update_category(
     await session.commit()
     await session.refresh(category)
     return category
+
+
+async def delete_category(
+    session: AsyncSession,
+    category: Category,
+) -> None:
+    await session.delete(category)
+    await session.commit()
+

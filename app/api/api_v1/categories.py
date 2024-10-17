@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.api_v1.fastapi_users import current_active_user
@@ -54,4 +54,15 @@ async def update_category(
         session=session,
         category=category,
         category_update=category_update,
+    )
+
+
+@router.delete("/{category_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_category(
+    session: AsyncSession = Depends(db_helper.getter_session),
+    category: Category = Depends(category_getter),
+):
+    return await categories.delete_category(
+        session=session,
+        category=category,
     )
