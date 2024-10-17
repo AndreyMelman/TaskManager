@@ -11,7 +11,7 @@ class TaskBase(BaseModel):
     priority: PriorityEnum = PriorityEnum.low
     deadline_at: datetime = Field(default=datetime.now())
     completed: bool = Field(default=False)
-
+    category_id: int | None = None
 
 class TaskCreate(TaskBase):
     pass
@@ -23,7 +23,7 @@ class TaskUpdate(TaskCreate):
     priority: PriorityEnum | None = None
     deadline_at: datetime | None = Field(default=datetime.now())
     completed: bool | None = Field(default=False)
-
+    category_id: int | None = None
 
 class TaskUpdateStatus(BaseModel):
     completed: bool = Field(default=True)

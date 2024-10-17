@@ -1,7 +1,7 @@
 from sqlalchemy import select, Result
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from models import Task, User
+from models import Task, User, Category
 from schemas.task import (
     TaskCreate,
     TaskUpdate,
@@ -66,7 +66,6 @@ async def get_sorted_tasks(
     result: Result = await session.execute(stmt)
     tasks = result.scalars().all()
     return list(tasks)
-
 
 
 
