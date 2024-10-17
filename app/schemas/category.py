@@ -10,11 +10,13 @@ class CategoryCreate(CategoryBase):
 
 
 class CategoryUpdate(CategoryCreate):
-    name: str | None = Field(default=None, max_length=32)
+    pass
 
 
 class Category(CategoryBase):
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(
+        from_attributes=True,
+    )
 
     id: int
     user_id: int

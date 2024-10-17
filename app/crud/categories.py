@@ -2,7 +2,7 @@ from sqlalchemy import select, Result
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models import Category, User
-from schemas.category import CategoryCreate
+from schemas.category import CategoryCreate, CategoryUpdate
 
 
 async def create_category(
@@ -38,4 +38,17 @@ async def get_category_by_id(
     )
     result: Result = await session.execute(stmt)
     category = result.scalars().first()
+    return category
+
+
+async def update_category(
+    session: AsyncSession,
+    category: Category,
+    category_update: CategoryUpdate,
+    partial: bool = False,
+):
+    for value, keys in category_update.model_dump(exclude_unset=partial).items():
+        setattr(category, value, keys)
+    await session.commit()
+    await session.refresh(category)
     return category
