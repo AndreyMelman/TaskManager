@@ -58,6 +58,11 @@ class EmailConfig(BaseModel):
     smtp_port: str
 
 
+class CeleryConfig(BaseModel):
+    celery_broker_url: str
+    celery_result_backend: str
+
+
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env",
@@ -72,6 +77,7 @@ class Settings(BaseSettings):
     api: ApiPrefix = ApiPrefix()
     access_token: AccessToken
     email_a: EmailConfig
+    celery: CeleryConfig
 
 
 settings = Settings()
