@@ -13,6 +13,7 @@ alembic = "^1.13.3"
 fastapi-users = {extras = ["sqlalchemy"], version = "^13.0.0"}
 orjson = "^3.10.7"
 aiosmtplib = "^3.0.2"
+celery = {extras = ["redis"], version = "^5.4.0"}
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.8.0"
