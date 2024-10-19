@@ -8,6 +8,8 @@ from models import User
 from core.config import settings
 from core.types.user_id import UserIdType
 
+from templates.email_templates import get_welcome_body, get_welcome_subject
+
 if TYPE_CHECKING:
     from fastapi import Request
     from fastapi import Response
@@ -28,8 +30,8 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, UserIdType]):
             "User %r has registered.",
             user.id,
         )
-        subject = "Welcome to Our Service!"
-        body = f"Hello {user.email},\n\nThank you for registering on our platform. We're excited to have you!"
+        subject = get_welcome_subject(user.email)
+        body = get_welcome_body(user.email)
 
         send_mail.delay(user.email, subject, body)
 
