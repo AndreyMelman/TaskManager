@@ -1,8 +1,11 @@
+from typing import Annotated
+
 from pydantic import BaseModel, ConfigDict, Field
 
 
 class CategoryBase(BaseModel):
-    name: str = Field(min_length=1, max_length=32, description="Category name")
+    name: Annotated[str, Field(min_length=1, max_length=255,description="Category name")] = 'Category'
+
 
 
 class CategoryCreate(CategoryBase):

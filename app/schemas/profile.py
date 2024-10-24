@@ -1,19 +1,17 @@
 import re
+
 from datetime import date, datetime
-from email.policy import default
-from typing import Any
 from typing import Annotated
 from pydantic import BaseModel, ConfigDict, Field, field_validator
-from annotated_types import MaxLen, MinLen
 
 
 class ProfileBase(BaseModel):
-    first_name: str | None = Field(default=None, max_length=50)
-    last_name: str | None = Field(default=None, max_length=50)
-    bio: str | None = Field(default=None, min_length=0, max_length=50000)
+    first_name: Annotated[str | None, Field(max_length=50)] = None
+    last_name: Annotated[str | None, Field(max_length=50)] = None
+    bio: Annotated[str | None, Field(max_length=500)] = None
     phone_number: str | None = Field(default=None)
-    address: str | None = Field(default=None, min_length=0, max_length=500)
-    date_of_birth: date | None = Field(default=None, validate_default=True)
+    address: Annotated[str | None, Field(max_length=500)] = None
+    date_of_birth: Annotated[date | None, Field(validate_default=True)] = None
 
     @field_validator("phone_number")
     def validate_phone_number(cls, value: str) -> str:
