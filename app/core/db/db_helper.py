@@ -53,7 +53,6 @@ class DatabaseHelper:
                 log.info("Starting database session and transaction")
                 yield session
                 log.info("Session created and transaction committed successfully")
-            log.info("Session closed successfully")
         except SQLAlchemyError as e:
             log.error(
                 "Database error during transaction: %r. Rolling back transaction.", e
@@ -61,6 +60,8 @@ class DatabaseHelper:
             raise HTTPException(
                 status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Database error"
             )
+        finally:
+            log.info("Session closed successfully")
 
 
 db_helper = DatabaseHelper(
