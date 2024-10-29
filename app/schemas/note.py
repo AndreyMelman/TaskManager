@@ -6,7 +6,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 class NoteBase(BaseModel):
     title: Annotated[str, Field(min_length=1, max_length=50)] = "Title"
-    content: Annotated[str | None, Field(min_length=1, max_length=50000)] = None
+    content: Annotated[str | None, Field(max_length=50000)] = None
 
 class NoteCreate(NoteBase):
     pass
