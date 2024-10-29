@@ -1,6 +1,6 @@
 import os
 
-from pydantic import BaseModel, PostgresDsn
+from pydantic import BaseModel, PostgresDsn, RedisDsn
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -61,13 +61,16 @@ class EmailConfig(BaseModel):
 
 
 class CeleryConfig(BaseModel):
-    celery_broker_url: str
-    celery_result_backend: str
+    celery_broker_url: RedisDsn
+    celery_result_backend: RedisDsn
 
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env"),
+        env_file=os.path.join(
+            os.getcwd(),
+            ".env" if os.path.basename(os.getcwd()) == "app" else "app/.env",
+        ),
         case_sensitive=False,
         env_nested_delimiter="__",
         env_prefix="APP_CONFIG__",

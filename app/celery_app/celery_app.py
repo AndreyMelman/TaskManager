@@ -12,8 +12,8 @@ log = logging.getLogger(__name__)
 
 celery_app = Celery(
     "notification",
-    broker=settings.celery.celery_broker_url,
-    backend=settings.celery.celery_result_backend,
+    broker=str(settings.celery.celery_broker_url),
+    backend=str(settings.celery.celery_result_backend),
 )
 
 celery_app.conf.update(
