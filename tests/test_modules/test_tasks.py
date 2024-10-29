@@ -11,7 +11,7 @@ from schemas.task import TaskCreate
 from contextlib import nullcontext as does_not_raise
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio(loop_scope="session")
 @pytest.mark.parametrize(
     "title, description, priority, deadline_at, completed, expected",
     [

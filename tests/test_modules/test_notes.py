@@ -10,7 +10,7 @@ from contextlib import nullcontext as does_not_raise
 from tests.test_modules.conftest import test_notes
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio(loop_scope="session")
 @pytest.mark.parametrize(
     "title, content, expected",
     [
@@ -51,7 +51,7 @@ async def test_create_note(
         assert new_note.user == test_user
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio(loop_scope="session")
 async def test_get_notes(
     session: AsyncSession,
     test_user: User,
@@ -73,7 +73,7 @@ async def test_get_notes(
         assert note.user_id == test_user.id
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio(loop_scope="session")
 async def test_get_notes_no_notes(
     session: AsyncSession,
     test_user: User,
@@ -86,7 +86,7 @@ async def test_get_notes_no_notes(
     assert notes == []
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio(loop_scope="session")
 async def test_delete_note(
     session: AsyncSession,
     test_notes: list[Note],
