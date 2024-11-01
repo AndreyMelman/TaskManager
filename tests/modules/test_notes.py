@@ -7,7 +7,7 @@ from schemas.note import NoteCreate
 
 from contextlib import nullcontext as does_not_raise
 
-from tests.modules.conftest import test_notes
+from tests.conftest import test_notes
 
 
 @pytest.mark.asyncio(loop_scope="session")

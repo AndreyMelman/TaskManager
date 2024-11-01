@@ -8,7 +8,7 @@ from tests.utils.utils import get_superuser_token_headers
 
 
 @pytest.mark.asyncio
-async def test_create_notes(test_user: User) -> None:
+async def test_create_notes(test_users: User) -> None:
     data = {"title": "Foo", "content": "Fighters"}
     headers = await get_superuser_token_headers()
     async with AsyncClient(
