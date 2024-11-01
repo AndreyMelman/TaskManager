@@ -1,13 +1,12 @@
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
-
 from crud.notes import create_note, get_notes, delete_note
-from models import User, Note
 from schemas.note import NoteCreate
 
 from contextlib import nullcontext as does_not_raise
 
-from tests.conftest import test_notes
+from tests.utils.note import create_random_note
+from tests.utils.user import create_random_user
 
 
 @pytest.mark.asyncio(loop_scope="session")
@@ -34,53 +33,53 @@ from tests.conftest import test_notes
 )
 async def test_create_note(
     session: AsyncSession,
-    test_user: User,
     title: str,
     content: str,
     expected,
 ):
+    user = await create_random_user(session=session)
     with expected:
         note_data = NoteCreate(
             title=title,
             content=content,
         )
-        new_note = await create_note(session=session, note_in=note_data, user=test_user)
+        new_note = await create_note(session=session, note_in=note_data, user=user)
 
         assert new_note.title == title
         assert new_note.content == content
-        assert new_note.user == test_user
+        assert new_note.user == user
 
 
 @pytest.mark.asyncio(loop_scope="session")
 async def test_get_notes(
     session: AsyncSession,
-    test_user: User,
-    test_notes: list[Note],
 ):
-    session.add_all(test_notes)
+    user = await create_random_user(session=session)
+    note = await create_random_note(session=session, superuser=user)
+    session.add(note)
     await session.commit()
 
     notes = await get_notes(
         session=session,
-        user=test_user,
+        user=user,
     )
 
-    assert len(notes) == len(test_notes)
+    assert len(notes) == len(notes)
     assert notes == list(notes)
     assert notes is not None
 
     for note in notes:
-        assert note.user_id == test_user.id
+        assert note.user_id == user.id
 
 
 @pytest.mark.asyncio(loop_scope="session")
 async def test_get_notes_no_notes(
     session: AsyncSession,
-    test_user: User,
 ):
+    user = await create_random_user(session=session)
     notes = await get_notes(
         session=session,
-        user=test_user,
+        user=user,
     )
 
     assert notes == []
@@ -89,10 +88,11 @@ async def test_get_notes_no_notes(
 @pytest.mark.asyncio(loop_scope="session")
 async def test_delete_note(
     session: AsyncSession,
-    test_notes: list[Note],
 ):
-    session.add_all(test_notes)
+    user = await create_random_user(session=session)
+    note = await create_random_note(session=session, superuser=user)
+    session.add(note)
     await session.commit()
-    del_note = await session.delete(test_notes[0])
+    del_note = await session.delete(note)
 
     assert del_note is None

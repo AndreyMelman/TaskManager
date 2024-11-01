@@ -1,14 +1,13 @@
-from datetime import datetime
-
 import pytest
 
+from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from crud.tasks import create_task
-from models import User
 from schemas.task import TaskCreate
-
 from contextlib import nullcontext as does_not_raise
+
+from tests.utils.user import create_random_user
 
 
 @pytest.mark.asyncio(loop_scope="session")
@@ -115,7 +114,6 @@ from contextlib import nullcontext as does_not_raise
 )
 async def test_greate_task(
     session: AsyncSession,
-    test_user: User,
     title: str,
     description: str,
     priority: str,
@@ -123,6 +121,7 @@ async def test_greate_task(
     completed: bool,
     expected,
 ):
+    user = await create_random_user(session=session)
     with expected:
         task_data = TaskCreate(
             title=title,
@@ -132,7 +131,7 @@ async def test_greate_task(
             completed=completed,
         )
 
-        new_task = await create_task(session=session, task_in=task_data, user=test_user)
+        new_task = await create_task(session=session, task_in=task_data, user=user)
 
         assert new_task.id is not None
         assert new_task.title == task_data.title
@@ -140,4 +139,4 @@ async def test_greate_task(
         assert new_task.priority == task_data.priority
         assert new_task.deadline_at == task_data.deadline_at
         assert new_task.completed == task_data.completed
-        assert new_task.user_id == test_user.id
+        assert new_task.user_id == user.id
