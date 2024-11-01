@@ -10,6 +10,11 @@ from tests.test_config import engine, SessionFactory
 
 log = logging.getLogger(__name__)
 
+from fastapi_users.password import PasswordHelper
+from pwdlib import PasswordHash, exceptions
+from pwdlib.hashers.argon2 import Argon2Hasher
+
+
 
 @pytest.fixture(scope="session", autouse=True)
 async def setup_db():
@@ -29,17 +34,13 @@ async def session():
 
 @pytest.fixture(scope="function")
 async def test_user(session: AsyncSession) -> User:
-    user = User(email=f"test_user_{uuid.uuid4()}@example.com", hashed_password="pass")
+    password_hash = PasswordHash((
+        Argon2Hasher(),
+    ))
+    password_helper = PasswordHelper(password_hash)
+
+    user = User(email="1@1.com", hashed_password=password_helper.hash('1'))
     session.add(user)
     await session.commit()
     await session.refresh(user)
     return user
-
-
-@pytest.fixture(scope="function")
-async def test_notes(test_user: User) -> list[Note]:
-    notes = [
-        Note(title="Title1", content="Note 1", user_id=test_user.id),
-        Note(title="Title2", content="Note 2", user_id=test_user.id),
-    ]
-    return notes
