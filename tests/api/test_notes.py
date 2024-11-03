@@ -6,7 +6,7 @@ from httpx import AsyncClient, ASGITransport
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from main import app
-from models import User, Note
+from models import User
 from tests.utils.note import create_random_note
 
 
@@ -40,7 +40,10 @@ async def test_get_note(
     superuser: User,
     superuser_token_headers: dict[str, str],
 ) -> None:
-    note = await create_random_note(session=session, superuser=superuser)
+    note = await create_random_note(
+        session=session,
+        superuser=superuser,
+    )
     async with AsyncClient(
         transport=ASGITransport(app=app),
         base_url="http://localhost:8080",
@@ -122,7 +125,10 @@ async def test_update_note(
     superuser: User,
     superuser_token_headers: dict[str, str],
 ) -> None:
-    note = await create_random_note(session=session, superuser=superuser)
+    note = await create_random_note(
+        session=session,
+        superuser=superuser,
+    )
     data = {"title": "Foo", "content": "Fighters"}
     async with AsyncClient(
         transport=ASGITransport(app=app),
@@ -172,7 +178,10 @@ async def test_delete_note(
     superuser_token_headers: dict[str, str],
 ) -> None:
     note = await create_random_note(session=session, superuser=superuser)
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://localhost:8080",) as client:
+    async with AsyncClient(
+        transport=ASGITransport(app=app),
+        base_url="http://localhost:8080",
+    ) as client:
         response = await client.delete(
             f"/api/v1/notes/{note.id}/",
             headers=superuser_token_headers,
@@ -188,7 +197,10 @@ async def test_delete_note_not_found(
     superuser_token_headers: dict[str, str],
 ) -> None:
     note_id = random.randint(1, 100)
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://localhost:8080",) as client:
+    async with AsyncClient(
+        transport=ASGITransport(app=app),
+        base_url="http://localhost:8080",
+    ) as client:
         response = await client.delete(
             f"/api/v1/notes/{note_id}/",
             headers=superuser_token_headers,
