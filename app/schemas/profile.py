@@ -9,14 +9,14 @@ class ProfileBase(BaseModel):
     first_name: Annotated[str | None, Field(max_length=50)] = None
     last_name: Annotated[str | None, Field(max_length=50)] = None
     bio: Annotated[str | None, Field(max_length=500)] = None
-    phone_number: str | None = Field(default=None)
+    phone_number: Annotated[str | None, Field(validate_default=True)] = None
     address: Annotated[str | None, Field(max_length=500)] = None
     date_of_birth: Annotated[date | None, Field(validate_default=True)] = None
 
     @field_validator("phone_number")
     @classmethod
     def validate_phone_number(cls, value: str) -> str:
-        if not re.match(r"^\+\d{1,15}$", value):
+        if value and not re.match(r"^\+\d{1,15}$", value):
             raise ValueError(
                 'Номер телефона должен начинаться с "+" и содержать от 1 до 15 цифр'
             )
@@ -24,10 +24,10 @@ class ProfileBase(BaseModel):
 
     @field_validator("date_of_birth")
     @classmethod
-    def validate_date_of_birth(cls, values: date) -> date:
-        if values and values >= datetime.now().date():
+    def validate_date_of_birth(cls, value: date) -> date:
+        if value and value >= datetime.now().date():
             raise ValueError("Дата рождения должна быть в прошлом")
-        return values
+        return value
 
 
 class ProfileCreate(ProfileBase):
