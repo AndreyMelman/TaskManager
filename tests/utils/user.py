@@ -21,8 +21,6 @@ async def create_random_user(session: AsyncSession) -> User:
 async def create_super_user(session: AsyncSession) -> User:
     password_hash = PasswordHash((Argon2Hasher(),))
     password_helper = PasswordHelper(password_hash)
-    email = await random_email()
-    password = await random_lower_string()
     user = User(email="1@1.com", hashed_password=password_helper.hash("1"))
     session.add(user)
     await session.commit()
