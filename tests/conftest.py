@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from models import User, Note
 from tests.utils.user import create_super_user
 
-from tests.utils.utils import get_superuser_token_headers
+from tests.utils.utils import get_superuser_token_headers, truncate_table
 
 log = logging.getLogger(__name__)
 
@@ -26,8 +26,7 @@ def set_logging_level():
 async def setup_db():
     log.info("Creating database tables for test...")
     async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
-        await conn.run_sync(Base.metadata.create_all)
+        await truncate_table(conn)
 
 
 @pytest.fixture(scope="function")
