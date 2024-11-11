@@ -1,6 +1,9 @@
 import string
 import random
 
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import text
+
 from main import app
 from httpx import AsyncClient, ASGITransport
 
@@ -31,3 +34,10 @@ async def get_superuser_token_headers() -> dict[str, str]:
     a_token = tokens["access_token"]
     headers = {"Authorization": f"Bearer {a_token}"}
     return headers
+
+
+async def truncate_table(session: AsyncSession):
+    await session.execute(text(f"TRUNCATE TABLE users RESTART IDENTITY CASCADE"))
+    await session.execute(text(f"TRUNCATE TABLE tasks RESTART IDENTITY CASCADE"))
+    await session.execute(text(f"TRUNCATE TABLE notes RESTART IDENTITY CASCADE"))
+
