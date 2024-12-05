@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  db:
+    container_name: postgres
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 90
+      POSTGRES_DB: fast
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+    networks:
+      - my_network
+
+  redis:
+    container_name: redis
+    image: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - my_network
+
+  app:
+    container_name: app
+    build: .
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://postgres:90@db:5432/fast
+    restart: always
+    depends_on:
+      - redis
+      - db
+    networks:
+      - my_network
+
+  celery_worker:
+    container_name: celery_worker
+    build: .
+    command: celery -A celery_app.celery_app.celery_app worker --loglevel=info
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
+      - db
+      - app
+    networks:
+      - my_network
+
+  migrate:
+    container_name: migrate
+    build: .
+    depends_on:
+      - db
+      - app
+      - redis
+      - celery_worker
+    command: alembic upgrade head
+    networks:
+      - my_network
+
+volumes:
+  db_data:
+
+networks:
+  my_network:
+    driver: bridge
