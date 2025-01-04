@@ -1,6 +1,6 @@
 services:
   db:
-    container_name: postgres
+    container_name: postgres_db
     restart: unless-stopped
     image: postgres
     env_file:
@@ -23,7 +23,7 @@ services:
       - "6379:6379"
 
   app:
-    container_name: app
+    container_name: app_taskmanager
     build: .
     command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
     volumes:
