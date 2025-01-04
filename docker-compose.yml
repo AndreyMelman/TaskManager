@@ -25,11 +25,11 @@ services:
   app:
     container_name: app_taskmanager
     build: .
-    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    command: uvicorn main:app --host 0.0.0.0 --port 8081 --reload
     volumes:
       - .:/app
     ports:
-      - "8080:8080"
+      - "8081:8081"
     env_file:
       - ./app/.env
     restart: unless-stopped
