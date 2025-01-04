@@ -6,7 +6,7 @@ services:
     env_file:
       - ./app/.env
     ports:
-      - "5432:5432"
+      - "15432:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
       - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
@@ -22,14 +22,14 @@ services:
     ports:
       - "6379:6379"
 
-  app:
+  app_taskmanager:
     container_name: app_taskmanager
     build: .
     command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
     volumes:
       - .:/app
     ports:
-      - "8000:8000"
+      - "8080:8080"
     env_file:
       - ./app/.env
     restart: unless-stopped
