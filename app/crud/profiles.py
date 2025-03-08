@@ -12,6 +12,14 @@ async def create_user_profile(
     user: User,
     profile_in: ProfileCreate,
 ) -> Profile:
+    stmt = select(Profile).where(Profile.user_id == user.id)
+    result = await session.execute(stmt)
+    profile_ex = result.scalars().first()
+
+    if profile_ex:
+        raise HTTPException(
+            status.HTTP_400_BAD_REQUEST, detail="Profile already exists for this user"
+        )
     profile = Profile(**profile_in.model_dump(), user_id=user.id)
     session.add(profile)
     await session.commit()
