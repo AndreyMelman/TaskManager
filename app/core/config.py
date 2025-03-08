@@ -1,12 +1,44 @@
-import os
+from typing import Literal
 
-from pydantic import BaseModel, PostgresDsn, RedisDsn
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import (
+    BaseModel,
+    PostgresDsn,
+    RedisDsn,
+)
+from pydantic_settings import (
+    BaseSettings,
+    SettingsConfigDict,
+)
+from dotenv import load_dotenv
+
+load_dotenv("../.env")
+
+LOG_DEFAULT_FORMAT = (
+    "[%(asctime)s.%(msecs)03d] %(module)10s:%(lineno)-3d %(levelname)-7s - %(message)s"
+)
 
 
 class RunConfig(BaseModel):
     host: str = "localhost"
     port: int = 8000
+
+
+class GunicornConfig(BaseModel):
+    host: str = "localhost"
+    port: int = 8000
+    timeout: int = 900
+    workers: int = 1
+
+
+class LoggingConfig(BaseModel):
+    log_level: Literal[
+        "debug",
+        "info",
+        "warning",
+        "error",
+        "critical",
+    ] = "info"
+    log_format: str = LOG_DEFAULT_FORMAT
 
 
 class ApiV1Prefix(BaseModel):
@@ -67,10 +99,7 @@ class CeleryConfig(BaseModel):
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=os.path.join(
-            os.getcwd(),
-            ".env" if os.path.basename(os.getcwd()) == "app" else "app/.env",
-        ),
+        env_file=".env",
         case_sensitive=False,
         env_nested_delimiter="__",
         env_prefix="APP_CONFIG__",
@@ -78,6 +107,8 @@ class Settings(BaseSettings):
     )
 
     run: RunConfig = RunConfig()
+    gunicorn: GunicornConfig = GunicornConfig()
+    logging: LoggingConfig = LoggingConfig()
     db: DatabaseConfig
     api: ApiPrefix = ApiPrefix()
     access_token: AccessToken
