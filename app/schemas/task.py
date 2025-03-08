@@ -8,11 +8,12 @@ from models.task import PriorityEnum
 
 class TaskBase(BaseModel):
     title: Annotated[str, Field(min_length=1, max_length=50)] = "title"
-    description:Annotated[str | None, Field(max_length=50)] = "description"
+    description: Annotated[str | None, Field(max_length=50)] = "description"
     priority: PriorityEnum = Field(default=PriorityEnum.low)
     deadline_at: datetime | None = Field(default=datetime.now())
     completed: bool = Field(default=False)
     category_id: int | None = None
+
 
 class TaskCreate(TaskBase):
     pass
@@ -25,6 +26,7 @@ class TaskUpdate(TaskCreate):
     deadline_at: datetime | None = Field(default=datetime.now())
     completed: bool | None = Field(default=False)
     category_id: int | None = None
+
 
 class TaskUpdateStatus(BaseModel):
     completed: bool = Field(default=True)
