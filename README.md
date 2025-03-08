@@ -1,20 +1,148 @@
-## TaskManager app REST API backend
-Template that contains 10+ building blocks for a web application with 10+ advanced development tools.
+## Диспетчер задач и заметок на FastAPI с регистрацией, аутентификацией и авторизацией
 
-Modern web application REST API backend boilerplate built with Python, FastAPI, and Celery.
-    
-## Technology Stack and Features
+Проект представляет собой мини диспетчер задач и заметок, разработанный на основе **FastAPI**, с реализацией системы регистрации, аутентификации и авторизации пользователей.Проект включает модульную архитектуру, гибкое логирование через **logging**, и взаимодействие с базой данных с использованием **SQLAlchemy**. Для управления миграциями используется **Alembic**.
 
-- ⚡ [**FastAPI**](https://fastapi.tiangolo.com) for the Python backend API.
-    -  [SQLAlchemy](https://www.sqlalchemy.org/) for the Python SQL database interactions (ORM).
-    -  [Pydantic](https://docs.pydantic.dev), used by FastAPI, for the data validation and settings management.
-    -  [PostgreSQL](https://www.postgresql.org) as the SQL database.
-- [Docker Compose](https://www.docker.com) for development and production.
-- Secure password hashing by default.
-- [FastAPI Users](https://fastapi-users.github.io/fastapi-users/latest/) for authentication.
-- Email based password recovery.
-- Tests with [Pytest](https://pytest.org).
-- [Celery](https://github.com/celery/celery) Celery is a simple, flexible, and reliable distributed system to process vast amounts of messages.
-- [Redis](https://redis.io/) A self-managed data platform that unlocks the full potential of Redis at enterprise scale.
-- [Poetry](https://python-poetry.org/) Python packaging and dependency management made easy.
--  Deployment instructions using Docker Compose.
+## Технологический стек
+- ⚡ [**FastAPI**](https://fastapi.tiangolo.com) это фреймворк для создания лаконичных и довольно быстрых HTTP API-серверов со встроенными валидацией, сериализацией и асинхронностью,
+что называется, из коробки.
+    -  [SQLAlchemy](https://www.sqlalchemy.org/) программная библиотека на языке Python для работы с реляционными СУБД с применением технологии ORM.
+    -  [Pydantic](https://docs.pydantic.dev) библиотека для Python, предназначенная для валидации и трансформации данных.
+    -  [PostgreSQL](https://www.postgresql.org) свободная объектно-реляционная система управления базами данных (СУБД).
+- [Docker Compose](https://www.docker.com) система сборки, запуска и управления множеством контейнеров.
+- [FastAPI Users](https://fastapi-users.github.io/fastapi-users/latest/) Безопасное хеширование паролей по умолчанию, аутентификация и авторизация.
+- Восстановление пароля по электронной почте.
+- Тестирование с [Pytest](https://pytest.org).
+- [Celery](https://github.com/celery/celery) асинхронная распределенная очередь задач, написанная на Python, она предназначена для обработки сообщений в реальном времени при помощи многозадачности.
+- [Redis](https://redis.io/) система управления базами данных, которая хранит информацию в виде пар ключ-значение.
+- [Poetry](https://python-poetry.org/) инструмент для управления зависимостями в Python проектах (аналог встроенного pip).
+- Развертывание с помощью Docker Compose.
+
+
+## Основные возможности
+1. **Управление пользователями:**
+   - Управление пользователями с помощью библиотеки **FastAPI Users**
+   - Регистрация и вход пользователей.
+   - Безопасное хеширование паролей с использованием **Argon2 algorithm** и **bcrypt**.
+   - Реализацию обеспечивает **pwdlib** — современная оболочка хеширования паролей.
+   - Авторизация с использованием **JWT** токенов через библиотеку **python-jose**.
+   - Защита эндпоинтов с помощью ролей и зависимостей.
+   - У каждого пользователя свой профиль.
+   - Отдельно можно создать суперпользователя, например для администрирования приложения.
+
+2. **Функционал:**
+   - Задачи и заметки:
+     - Создание новой задачи.
+   - Обновление задач и заметок:
+     - Автор может обновлять по одному пункту или сразу всю информацию.
+   - Удаление:
+     - Автор может удалить свои заметки и задачи.
+   - Просмотр задач и заметок:
+     - Получение списка всех опубликованных задач и заметок.
+     - Просмотр конкретной записи.
+     - Фильтрация задач и заметок по тегам.
+     - Сортировка задач и заметок.
+   - Категории:
+     - Автор может добавлять категории к задачам и заметкам
+
+3. **Логирование:**
+   - Использование **logging** для удобного управления логами.
+
+4. **Модульная архитектура:**
+   - Проект разделен на модули для упрощения поддержки и масштабирования.
+
+5. **Рабата с отложенными сообщениями**
+   - Использование **Celery** и **Redis** для отложенных сообщений:
+     - Реализована функция отправки на email-почту приветственного сообщения о регистрации нового пользователя.
+     - Использование **Jinja2** для оформления текста отправки сообщения.
+      
+6. **Тестирование**
+   - Тестирование работы базы данных с помощью **Pytest**.
+   - Тестирование API с помощью **Pytest**.
+   - Ручное тестирование документации.
+
+
+## Структура проекта
+```
+├── app
+│  ├── .env                    # Конфигурация окружения
+│  ├── .env_template           # Пример конфигурации окружения
+│  ├── actions/                # Создание суперпульзователя
+│  ├── alembic/                # Миграции базы данных
+│  ├── alembic.ini             # Конфигурация Alembic
+│  ├── api/                    # Модуль API
+│  ├── celery_app/             # Модуль для отложенных событий
+│  ├── core/                   # Модуль авторизации и аутентификации, работы с БД, конфиг файл
+│  ├── crud/                   # Работа с базой данных
+│  ├── main.py                 # Основной файл для запуска приложения
+│  ├── models/                 # Создание таблиц в базе данных
+│  ├── schemas/                # Схемы модулей
+│  ├── templates/              # Работа c Jinja2
+│  └── utils/                  # Утилиты
+└── tests                      
+   ├── api/                    # Тестирование API
+   ├── modules/                # Тестирование БД
+   ├── test_config.py          # Конфиг файл
+   ├── test_main.py            # ТЗапуск тестов
+   └── utils/                  # Утилиты
+├── docker-compose.yml         # Инструкции, необходимые для запуска и настройки сервисов
+├── Dockerfile                 # Конфигурационный файл
+├── init-db.sh                 # Файл для создания тестовой БД
+├── poetry.lock                # Зависимости проекта
+├── pyproject.toml             # Зависимости проекта
+├── pytest.ini                 # Конфигурация Pytest
+├── README.md                  # Документация проекта
+
+```
+## Зависимости
+
+- **Основные:** `fastapi`, `pydantic`, `uvicorn`
+- **Для работы с базой данных:** `SQLAlchemy`, `asyncpg`, `alembic`
+- **Для аутентификации:** `FastAPI Users`, `bcrypt`, `passlib[bcrypt]`, `python-jose`
+- **Шаблонизатор:** `jinja2`
+- **Прочее:** `markdown2`, `logging`, `aiosmtplib`, `celery`, `redis`
+- **Тестирование:** `pytest`, `pytest-asyncio`
+
+
+## Настройка
+
+1. Склонируйте репозиторий:
+
+   ```bash
+   git clone https://github.com/AndreyMelman/TaskManager.git
+   ```
+
+2. Настройте файл `.env`:
+
+   ```env
+   APP_CONFIG__DB__URL="postgresql+asyncpg://name:password@localhost:port/database"
+   APP_CONFIG__ACCESS_TOKEN__RESET_PASSWORD_TOKEN_SECRET="SECRET"
+   APP_CONFIG__ACCESS_TOKEN__VERIFICATION_TOKEN_SECRET="SECRET"
+   APP_CONFIG__EMAIL_A__SMTP_USER=""
+   APP_CONFIG__EMAIL_A__SMTP_PASSWORD=""
+   APP_CONFIG__EMAIL_A__SMTP_SERVER=""
+   APP_CONFIG__EMAIL_A__SMTP_PORT=""
+   APP_CONFIG__CELERY__CELERY_BROKER_URL="redis://redis:6379/0"
+   APP_CONFIG__CELERY__CELERY_RESULT_BACKEND="redis://redis:6379/0"
+   
+   ```
+
+3. Для быстрого запуска приложения потребуется докер, запустите:
+
+   ```bash
+   docker compose up --build
+   ```
+   Создается база данных PostgreSQL, сервер Redis, запускается Celery и приложение, а 
+   также выполняются миграции базы данных.
+
+Приложение будет доступно по адресу [http://0.0.0.0:8000](http://127.0.0.1:8000).
+
+## Развитие проекта
+
+Этот шаблон предоставляет прочную основу для разработки масштабируемых веб-приложений с аутентификацией, авторизацией и управлением контентом. Возможности легко расширяются за счет модульной архитектуры.
+
+Возможные направления для развития:
+- Реализация системы комментариев.
+- Добавление ролей пользователей (например, администратор, редактор).
+- Расширение интерфейса с использованием современных фронтенд-фреймворков (например, Vue.js или React).
+
+
