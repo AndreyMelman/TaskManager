@@ -5,11 +5,13 @@ from contextlib import asynccontextmanager
 import uvicorn
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
+from starlette.middleware.cors import CORSMiddleware
 
 from api import router as api_router
 from core.config import settings
 from core.db import db_helper
 from utils.common_log import configure_logging
+
 
 configure_logging(level=logging.INFO)
 log = logging.getLogger(__name__)
@@ -22,16 +24,23 @@ async def lifespan(app: FastAPI):
     await db_helper.dispose()
 
 
-app = FastAPI(
+main_app = FastAPI(
     default_response_class=ORJSONResponse,
     lifespan=lifespan,
     title="ApiTaskManager",
 )
 
-app.include_router(api_router)
+main_app.add_middleware(
+    CORSMiddleware,  # type: ignore
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+main_app.include_router(api_router)
 
 
-@app.get("/")
+@main_app.get("/")
 async def root():
     return {"message": "Hello"}
 
